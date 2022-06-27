@@ -28,6 +28,7 @@ int Menu(const char *menu[],int a,Table *table,FILE *f1,FILE *f2){
                                 char *info = (char *)calloc(25,sizeof(char));
                                 scanf("%s",info);
                                 AddforFile(table,key,info,f1,f2);
+				//Readfromfile(table,f1,f2,1);
                         }
                         return 1;
                         break;
@@ -86,6 +87,7 @@ int main(){
         	scanf("%d",&count);
         	}
 		    f1 = fopen(fname,"w+b");
+		    fwrite(&count, 1, sizeof(int), f1);
 		    table = Init(count);
 	            table->n = 0;
 		    printf("Enter name of second file:\n");
@@ -103,8 +105,8 @@ int main(){
         do{
                 flag = Menu(menu,6,table,f1,f2);
         }while (flag < 6 && flag > 0);
-	    fseek(f1,0,SEEK_SET);
-	    fwrite(&table->n,sizeof(int),1,f1);
+	    //fseek(f1,0,SEEK_SET);
+	    //fwrite(&table->n,sizeof(int),1,f1);
 	    fclose(f1);
         fclose(f2);
         Clear(table);

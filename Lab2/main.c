@@ -80,7 +80,7 @@ int get_count_p(list *list){
     int count = 0;
     item_list *temp = list->first;
     item_list *next;
-    printf("          |");
+    printf("       |");
     printf("%8d|",temp->passanger.ta);
     next = temp;
     temp = temp->next;
@@ -134,7 +134,7 @@ int main(){
         strcpy(table[i3][0],num);
     }
     char *no;
-    no = "       ";
+    no = "    1  ";
     int j = 1;
     while (j<=count){
         i = 0;
@@ -156,9 +156,9 @@ int main(){
         }
         j++;
     }
-    for (int j = 0;j<count_st;j++){
-        for (int i = 0;i<=count;i++){
-            printf("%8s",table[j][i]);
+    for (int j = 0;j<=count;j++){
+        for (int i = 0;i<count_st;i++){
+            printf("%8s",table[i][j]);
         }
         printf("\n");
     }
@@ -175,4 +175,3 @@ int main(){
 
 
 }
-

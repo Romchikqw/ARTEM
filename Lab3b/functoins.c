@@ -21,6 +21,7 @@ char *Find(Table *table,int key){
         }
         return NULL;
 }
+
 int Add(Table *table,int key,char *info){
     Keyspace *temp;
     Keyspace *ptr = (Keyspace *)calloc(1,sizeof(Keyspace));
@@ -67,11 +68,13 @@ int AddforFile(Table *table,int key,char *info,FILE *f1,FILE *f2){
         if (key == 0 || !info) return 1;
         if (!table->ks1){
                 int offset = ftell(f2);
-                int takeoff = strlen(info)-1;
+                int takeoff = strlen(info);
                 fwrite(&offset,sizeof(int),1,f1);
                 fwrite(&takeoff,sizeof(int),1,f1);
+		printf("off %d\n", takeoff);
+		printf("ya lox ksta ");
                 fwrite(&key,sizeof(int),1,f2);
-                fwrite(info,sizeof(char),strlen(info),f2);
+                fwrite(info,sizeof(char),strlen(info) + 1,f2);
 		ptr->key = key;
                 ptr->info = info;
                 table->ks1 = ptr;
@@ -79,13 +82,16 @@ int AddforFile(Table *table,int key,char *info,FILE *f1,FILE *f2){
                 return 0;
         }
         temp = table->ks1;
-        while (temp->next) temp = temp->next;
+        while (temp->next)
+		temp = temp->next;
         int offset = ftell(f2);
-        int takeoff = strlen(info)-1;
+        int takeoff = strlen(info);
+	printf("ya ne lox ");
         fwrite(&offset,sizeof(int),1,f1);
         fwrite(&takeoff,sizeof(int),1,f1);
+	printf("off %d\n", takeoff);
         fwrite(&key,sizeof(int),1,f2);
-        fwrite(info,sizeof(char),strlen(info),f2);
+        fwrite(info,sizeof(char),strlen(info) + 1,f2);
         ptr->key = key;
         ptr->info = info;
         temp->next = ptr;
@@ -95,26 +101,26 @@ int AddforFile(Table *table,int key,char *info,FILE *f1,FILE *f2){
 
 void Createelfromfile(Table *table,int takeoff,FILE *f2){
         int key;
-        char *info = (char *)calloc(takeoff+1,sizeof(char));
+        char *info = (char *) calloc(takeoff + 1, sizeof(char));
         fread(&key,sizeof(int),1,f2);
-        fread(info,sizeof(char),takeoff,f2);
-	printf("%d\n",key);
+        fread(info,sizeof(char),takeoff + 1,f2);
+	printf("%d %s\n", key, info);
         AddforTable(table,key,info);
-        }
+}
 
 int Readfromfile(Table *table,FILE *f1,FILE *f2,int count){
         int offset = 0;
         int takeoff = 0;
-        printf("count : %d\n",count);
-        for (int i = 0;i<count;i++){
+	printf("top debug:\n");
+        for (int i = 0; i < count - 1; i++) {
+	//while (!(feof(f1))) {
                 fread(&offset,sizeof(int),1,f1);
                 fread(&takeoff,sizeof(int),1,f1);
+		//printf("schital %d'im %d %d\t", i, offset, takeoff);
                 Createelfromfile(table,takeoff,f2);
         }
         return 0;
 }
-
-
 
 int Delete(Table *table , int key,FILE *f1,FILE *f2){
         Keyspace *temp,*ptr;
@@ -125,7 +131,7 @@ int Delete(Table *table , int key,FILE *f1,FILE *f2){
                 table->count-=1;
                 return 0;
         }
-        while (temp){
+        while (temp) {
                 if (temp->next->key == key){
                         ptr = temp -> next;
                         temp -> next = ptr ->next;
